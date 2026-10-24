@@ -9,7 +9,7 @@
  * Public address of the site, used for SEO tags, the sitemap and link previews.
  * Change this if you use a different Cloudflare Pages project name or a custom domain.
  */
-export const siteUrl = "https://renzrusselsantiago.pages.dev";
+export const siteUrl = "https://renz-portfolio-108.pages.dev";
 
 export const profile = {
   name: "Renz Russel Santiago",
