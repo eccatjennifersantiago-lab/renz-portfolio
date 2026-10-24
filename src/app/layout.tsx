@@ -46,6 +46,8 @@ export const metadata: Metadata = {
     images: ["/og.jpg"],
   },
   robots: { index: true, follow: true },
+  // Google Search Console ownership (HTML tag method).
+  verification: { google: "q1fqA_N-dOxfIalRntHh3IzxOtz_EvxeZkf3kLp7zzc" },
 };
 
 export const viewport: Viewport = {
