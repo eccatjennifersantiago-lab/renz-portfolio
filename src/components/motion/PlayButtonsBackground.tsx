@@ -142,7 +142,6 @@ export function PlayButtonsBackground({ placement = "hero" }: { placement?: "her
         layer.style.transform =
           `translate3d(${(-cur.x * 48).toFixed(2)}px, ${(-cur.y * 32 + scroll * 0.18).toFixed(2)}px, 0) scale(${scale.toFixed(4)}) ` +
           `rotateY(${(cur.x * 6).toFixed(2)}deg) rotateX(${(-cur.y * 4).toFixed(2)}deg)`;
-        layer.style.opacity = String(Math.max(0, 1 - scroll / 900));
         if (visible) frame = requestAnimationFrame(draw);
       };
 
@@ -218,12 +217,12 @@ export function PlayButtonsBackground({ placement = "hero" }: { placement?: "her
 
   const frameClass =
     placement === "intro"
-      ? "absolute top-1/2 left-1/2 w-[max(160vw,200vh)] -translate-x-1/2 -translate-y-1/2 opacity-60 [perspective:1200px] md:w-[max(110vw,200vh)] md:opacity-80"
-      : "absolute top-[2%] right-[-55%] w-[175%] opacity-45 [perspective:1200px] sm:right-[-24%] sm:w-[128%] sm:opacity-70 lg:top-[-6%] lg:right-[-16%] lg:w-[100%] lg:opacity-100";
+      ? "absolute top-1/2 left-1/2 w-[max(160vw,200vh)] -translate-x-1/2 -translate-y-1/2 [perspective:1200px] md:w-[max(110vw,200vh)]"
+      : "absolute top-[2%] right-[-55%] w-[175%] [perspective:1200px] sm:right-[-24%] sm:w-[128%] lg:top-[-6%] lg:right-[-16%] lg:w-[100%]";
   const maskClass =
     placement === "intro"
-      ? "[mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_70%)]"
-      : "[mask-image:linear-gradient(to_left,transparent,#000_7%,#000_38%,transparent_86%),linear-gradient(to_bottom,transparent,#000_9%,#000_72%,transparent)] [mask-composite:intersect]";
+      ? "[mask-image:radial-gradient(ellipse_at_center,#000_62%,transparent_96%)]"
+      : "[mask-image:linear-gradient(to_right,transparent,#000_6%,#000_94%,transparent),linear-gradient(to_bottom,transparent,#000_6%,#000_92%,transparent)] [mask-composite:intersect]";
 
   return (
     // Not clipped here: the page column clips it at the window edge instead,

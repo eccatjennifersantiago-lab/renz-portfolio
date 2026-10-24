@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { Interactions } from "@/components/motion/Interactions";
+import { ContourBackground } from "@/components/motion/ContourBackground";
 import { Intro } from "@/components/motion/Intro";
 import { profile, services, siteUrl } from "@/data/site";
 import { PlayButtonsBackground } from "@/components/motion/PlayButtonsBackground";
@@ -44,6 +45,7 @@ export default function Home() {
       >
         Skip to content
       </a>
+      <ContourBackground />
       <SiteNav />
 
       {/* overflow-x-clip: lets the hero animation reach the window edge without sideways scroll. */}

@@ -59,7 +59,7 @@ export function Intro() {
       <PlayButtonsBackground placement="intro" />
 
       <div className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col-reverse items-start justify-center gap-8 px-6 sm:px-10 md:flex-row md:items-center md:justify-between md:gap-14 md:px-16">
-        <div className="w-full max-w-xl">
+        <div className="w-full max-w-xl [text-shadow:0_2px_18px_rgb(0_0_0/0.75),0_0_42px_rgb(0_0_0/0.55)]">
           <span
             className="intro-in inline-block rounded-full border border-white/20 px-4 py-1.5 text-sm font-semibold text-white/85 sm:text-base"
             style={delay(150)}
