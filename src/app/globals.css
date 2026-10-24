@@ -1,0 +1,356 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Colour tokens. Utilities read these as CSS variables, so the night theme
+   below only has to redefine them. */
+@theme {
+  --color-paper: #fafafa;
+  --color-surface: #ffffff;
+  --color-fg: #151515;
+  --color-muted: #595959;
+  --color-line: #e6e6e6;
+  --color-line-strong: #d4d4d4;
+  --color-wash: #f2f2f1;
+  /* Dark surfaces (case study, contact, buttons); stay dark in both themes. */
+  --color-night: #151515;
+  --color-night-soft: #262626;
+  --color-brand: #dc2626;
+  --color-brand-strong: #b91c1c;
+  --color-brand-ink: #dc2626;
+  /* Small red text on tinted (brand-soft) panels; meets 4.5:1. */
+  --color-brand-deep: #b91c1c;
+  --color-brand-soft: #fef2f2;
+  --color-brand-line: #fee2e2;
+  --color-accent: #f97316;
+  --color-accent-soft: #fff7ed;
+  --color-accent-ink: #c2410c;
+
+  --shadow-card: 0 1px 2px rgb(21 21 21 / 0.04), 0 12px 32px -18px rgb(21 21 21 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(21 21 21 / 0.05), 0 24px 48px -24px rgb(21 21 21 / 0.28);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee 48s linear infinite;
+  --animate-rise: rise 0.8s var(--ease-out-soft) both;
+  --animate-word-up: word-up 0.9s var(--ease-out-soft) both;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes word-up {
+    from {
+      transform: translateY(110%);
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+}
+
+/* ---------- Night theme: black with a red glow ---------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #0a0808;
+  --color-surface: #141011;
+  --color-fg: #f5f2f2;
+  --color-muted: #b4a9aa;
+  --color-line: rgb(255 255 255 / 0.09);
+  --color-line-strong: rgb(255 255 255 / 0.2);
+  --color-wash: #1d1718;
+  --color-night: #1a0c0e;
+  --color-night-soft: #2a1618;
+  --color-brand-ink: #f87171;
+  --color-brand-deep: #fca5a5;
+  --color-brand-soft: rgb(220 38 38 / 0.14);
+  --color-brand-line: rgb(248 113 113 / 0.22);
+  --color-accent-soft: rgb(249 115 22 / 0.14);
+  --color-accent-ink: #fb923c;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 16px 40px -20px rgb(0 0 0 / 0.8);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 28px 56px -24px rgb(127 29 29 / 0.55);
+}
+
+:root {
+  --sidebar-w: 0px;
+  color-scheme: light;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --sidebar-w: 288px;
+  }
+}
+
+html {
+  background: var(--color-paper);
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-fg);
+  overflow-x: clip;
+}
+
+/* Fixed gradient layer for night mode (cheaper than background-attachment). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  background:
+    radial-gradient(1100px 700px at 88% -12%, rgb(220 38 38 / 0.32), transparent 62%),
+    radial-gradient(900px 640px at -8% 108%, rgb(153 27 27 / 0.38), transparent 60%),
+    linear-gradient(180deg, #0a0808 0%, #140708 100%);
+}
+:root[data-theme="dark"] body {
+  background: transparent;
+}
+:root[data-theme="dark"] body::before {
+  opacity: 1;
+}
+
+::selection {
+  background: rgb(220 38 38 / 0.2);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+
+/* Anchor targets clear the sticky mobile header. */
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+@media (min-width: 64rem) {
+  section[id] {
+    scroll-margin-top: 2rem;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* Hero: soft page-coloured halo keeps small text readable over the
+   play-button animation behind it. */
+.hero-halo {
+  text-shadow:
+    0 0 12px var(--color-paper),
+    0 0 24px var(--color-paper),
+    0 0 40px var(--color-paper);
+}
+
+/* Hero: red underline drawn under the highlighted word. */
+.hero-underline {
+  background-image: linear-gradient(var(--color-brand), var(--color-brand));
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 100% 0.09em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-underline {
+    animation:
+      word-up 0.9s var(--ease-out-soft) both,
+      underline-draw 0.9s var(--ease-out-soft) 1s both;
+  }
+}
+@keyframes underline-draw {
+  from {
+    background-size: 0% 0.09em;
+  }
+}
+
+/* ---------- Tools strip ---------- */
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track:hover,
+.marquee-track:focus-within {
+  animation-play-state: paused;
+}
+/* Wrapped list by default (phones, reduced motion); marquee on wider screens. */
+.tools-static {
+  display: flex;
+}
+.tools-marquee {
+  display: none;
+}
+@media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+  .tools-static {
+    display: none;
+  }
+  .tools-marquee {
+    display: block;
+  }
+}
+
+/* ---------- Lightbox ---------- */
+dialog.lightbox::backdrop {
+  background: rgb(10 10 10 / 0.92);
+}
+dialog.lightbox[open] {
+  animation: rise 0.28s var(--ease-out-soft) both;
+}
+
+/* ---------- Scroll reveal ----------
+   State lives in the Reveal component: "static" (visible), "pending"
+   (below the fold, hidden) and "in" (entering). Content is never hidden
+   unless JavaScript has run and decided it is off screen. */
+[data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+[data-reveal="in"] {
+  transition:
+    opacity 0.8s var(--ease-out-soft),
+    transform 0.8s var(--ease-out-soft);
+}
+
+/* Stagger: children rise in one after another (index in --i). The animation
+   uses backwards fill so hover transforms work once it ends. */
+[data-stagger="pending"] > * {
+  opacity: 0;
+}
+[data-stagger="in"] > * {
+  animation: rise 0.8s var(--ease-out-soft) backwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+/* Process connectors draw in once their list is revealed. */
+[data-stagger="pending"] .connector {
+  transform: scale(0);
+}
+[data-stagger="in"] .connector {
+  transition: transform 0.9s var(--ease-out-soft) calc(var(--i, 0) * 90ms + 300ms);
+}
+
+/* Analytics chart: the line draws in left to right once scrolled into view. */
+[data-draw="pending"] .chart-clip {
+  clip-path: inset(0 100% 0 0);
+}
+[data-draw="in"] .chart-clip {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 2.4s var(--ease-out-soft) 0.3s;
+}
+
+/* ---------- Pointer spotlight ---------- */
+[data-spotlight] {
+  position: relative;
+  isolation: isolate;
+  --spot: rgb(220 38 38 / 0.1);
+}
+[data-spotlight="strong"] {
+  --spot: rgb(248 113 113 / 0.2);
+}
+[data-spotlight]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), var(--spot), transparent 65%);
+}
+[data-spotlight]:hover::before {
+  opacity: 1;
+}
+
+[data-tilt] {
+  transition: transform 0.35s var(--ease-out-soft);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ---------- Custom cursor (fine pointers only, set up in CustomCursor) ---------- */
+html.has-custom-cursor,
+html.has-custom-cursor *,
+html.has-custom-cursor *::before,
+html.has-custom-cursor *::after {
+  cursor: none;
+}
+html.has-custom-cursor
+  :is(input:not([type="button"], [type="submit"], [type="checkbox"], [type="radio"]), textarea, select, [contenteditable="true"]) {
+  cursor: text;
+}
+/* A modal sits in the top layer above the cursor, so hand back the native one. */
+html.has-custom-cursor:has(dialog[open]) * {
+  cursor: auto;
+}
+html.has-custom-cursor:has(dialog[open]) :is(a, button) {
+  cursor: pointer;
+}
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  pointer-events: none;
+  border-radius: 9999px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-brand);
+}
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid var(--color-brand);
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+}
+.cursor-ring.is-active {
+  background: rgb(220 38 38 / 0.14);
+}
+.cursor-dot.is-visible,
+.cursor-ring.is-visible {
+  opacity: 1;
+}
+html:has(dialog[open]) :is(.cursor-dot, .cursor-ring) {
+  opacity: 0;
+}
+
+/* ---------- Theme switch: circular reveal ---------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
