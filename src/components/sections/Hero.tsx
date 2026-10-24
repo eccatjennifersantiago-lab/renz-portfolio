@@ -23,7 +23,7 @@ export function Hero() {
 
       <h1
         id="home-heading"
-        className="hero-halo mt-6 max-w-[15ch] text-[2.6rem] leading-[1.06] font-extrabold tracking-[-0.045em] text-balance sm:text-6xl lg:text-[4.5rem] xl:text-[5rem]"
+        className="hero-halo mt-6 max-w-[10.5em] text-[2.6rem] leading-[1.06] font-extrabold tracking-[-0.045em] text-balance sm:text-6xl lg:text-[4.5rem] xl:text-[5rem]"
       >
         {words.map((word, i) => (
           <Fragment key={i}>
@@ -46,7 +46,7 @@ export function Hero() {
       </h1>
 
       <p
-        className="hero-halo mt-6 max-w-[54ch] text-lg leading-relaxed text-pretty text-muted motion-safe:animate-rise sm:text-xl sm:leading-relaxed"
+        className="hero-halo mt-6 max-w-[39.5em] text-lg leading-relaxed text-pretty text-muted motion-safe:animate-rise sm:text-xl sm:leading-relaxed"
         style={{ animationDelay: "520ms" }}
       >
         {hero.intro}
