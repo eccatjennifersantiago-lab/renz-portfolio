@@ -181,6 +181,82 @@ section[id] {
   }
 }
 
+/* ---------- Welcome screen (Intro) ----------
+   Fades out by itself after ~2.5 s (pure CSS); [data-skip] exits early.
+   Hidden for repeat views this session and for reduced motion. */
+.intro {
+  animation: intro-out 0.75s var(--ease-out-soft) 2.5s forwards;
+}
+.intro[data-skip] {
+  animation: intro-out-fast 0.45s var(--ease-out-soft) forwards;
+}
+@keyframes intro-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.04);
+  }
+}
+@keyframes intro-out-fast {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.04);
+  }
+}
+html[data-intro="seen"] .intro {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro {
+    display: none;
+  }
+}
+/* While it shows, hold the hero entrance until the welcome screen leaves. */
+html[data-intro="show"] {
+  --intro-delay: 2.4s;
+}
+
+.intro-glow {
+  background:
+    radial-gradient(700px 500px at 95% -10%, rgb(220 38 38 / 0.45), transparent 60%),
+    radial-gradient(600px 500px at -10% 110%, rgb(153 27 27 / 0.5), transparent 60%);
+  animation: intro-glow 6s ease-in-out infinite alternate;
+}
+@keyframes intro-glow {
+  to {
+    transform: scale(1.12) translate(-2%, 2%);
+  }
+}
+.intro-in {
+  animation: rise 0.8s var(--ease-out-soft) both;
+  animation-delay: var(--d, 0ms);
+}
+.intro-word {
+  display: inline-block;
+  animation: word-up 0.9s var(--ease-out-soft) both;
+  animation-delay: var(--d, 0ms);
+}
+.intro-card {
+  animation: intro-card 1s var(--ease-out-soft) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes intro-card {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.92) rotate(-2deg);
+  }
+}
+.intro-bar {
+  transform-origin: left;
+  animation: intro-bar 2.1s cubic-bezier(0.65, 0, 0.35, 1) 0.35s both;
+}
+@keyframes intro-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+
 /* ---------- Tools strip ---------- */
 .marquee-mask {
   mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);

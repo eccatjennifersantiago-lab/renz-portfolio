@@ -43,8 +43,11 @@ function compile(gl: WebGLRenderingContext, type: number, src: string) {
  * pauses when off screen. It starts once the page has loaded and gone idle,
  * so it never competes with the first paint. Reduced motion or no WebGL
  * shows a still frame instead.
+ *
+ * placement="intro" fills the welcome screen instead: it starts at once,
+ * ignores scrolling, and only runs while the welcome screen is showing.
  */
-export function PlayButtonsBackground() {
+export function PlayButtonsBackground({ placement = "hero" }: { placement?: "hero" | "intro" }) {
   const layerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -53,6 +56,9 @@ export function PlayButtonsBackground() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; // CSS shows the still frame
+    const isIntro = placement === "intro";
+    const introShowing = document.documentElement.dataset.intro === "show";
+    if (isIntro && !introShowing) return; // welcome screen skipped this visit
 
     let cancelled = false;
     let teardown: (() => void) | undefined;
@@ -129,10 +135,10 @@ export function PlayButtonsBackground() {
         }
         cur.x += (aim.x - cur.x) * 0.06;
         cur.y += (aim.y - cur.y) * 0.06;
-        const scroll = Math.min(window.scrollY, 900);
+        const scroll = isIntro ? 0 : Math.min(window.scrollY, 900);
         // Scale: grows in over the first 1.6 s, then zooms gently as you scroll.
-        const intro = Math.min(1, (performance.now() - startedAt) / 1600);
-        const scale = 0.82 + 0.18 * (1 - Math.pow(1 - intro, 3)) + (scroll / 900) * 0.22;
+        const grow = Math.min(1, (performance.now() - startedAt) / 1600);
+        const scale = 0.82 + 0.18 * (1 - Math.pow(1 - grow, 3)) + (scroll / 900) * 0.22;
         layer.style.transform =
           `translate3d(${(-cur.x * 48).toFixed(2)}px, ${(-cur.y * 32 + scroll * 0.18).toFixed(2)}px, 0) scale(${scale.toFixed(4)}) ` +
           `rotateY(${(cur.x * 6).toFixed(2)}deg) rotateX(${(-cur.y * 4).toFixed(2)}deg)`;
@@ -172,37 +178,61 @@ export function PlayButtonsBackground() {
       };
     };
 
-    // Wait for the page to finish loading, then for an idle moment.
     let idle = 0;
+    let introFrame = 0;
     const begin = () => {
       if (!cancelled) teardown = setup();
     };
+    // Hero: wait for the page to finish loading, then for an idle moment.
     const schedule = () => {
       idle =
         typeof window.requestIdleCallback === "function"
           ? window.requestIdleCallback(begin, { timeout: 2000 })
           : window.setTimeout(begin, 500);
     };
-    if (document.readyState === "complete") schedule();
-    else window.addEventListener("load", schedule, { once: true });
+    const whenLoaded = () => {
+      if (document.readyState === "complete") schedule();
+      else window.addEventListener("load", schedule, { once: true });
+    };
+    if (isIntro) {
+      // Welcome screen: start at the first idle moment (within 0.4 s), after hydration.
+      introFrame =
+        typeof window.requestIdleCallback === "function"
+          ? window.requestIdleCallback(begin, { timeout: 400 })
+          : requestAnimationFrame(begin);
+    }
+    else if (introShowing) window.addEventListener("introdone", whenLoaded, { once: true }); // one video at a time
+    else whenLoaded();
 
     return () => {
       cancelled = true;
+      if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(introFrame);
+      cancelAnimationFrame(introFrame);
+      window.removeEventListener("introdone", whenLoaded);
       window.removeEventListener("load", schedule);
       if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
       window.clearTimeout(idle);
       teardown?.();
     };
-  }, []);
+  }, [placement]);
+
+  const frameClass =
+    placement === "intro"
+      ? "absolute top-1/2 left-1/2 w-[max(160vw,200vh)] -translate-x-1/2 -translate-y-1/2 opacity-60 [perspective:1200px] md:w-[max(110vw,200vh)] md:opacity-80"
+      : "absolute top-[2%] right-[-55%] w-[175%] opacity-45 [perspective:1200px] sm:right-[-24%] sm:w-[128%] sm:opacity-70 lg:top-[-6%] lg:right-[-16%] lg:w-[100%] lg:opacity-100";
+  const maskClass =
+    placement === "intro"
+      ? "[mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_70%)]"
+      : "[mask-image:linear-gradient(to_left,transparent,#000_7%,#000_38%,transparent_86%),linear-gradient(to_bottom,transparent,#000_9%,#000_72%,transparent)] [mask-composite:intersect]";
 
   return (
     // Not clipped here: the page column clips it at the window edge instead,
     // so the awards are never cut off at the section border.
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-0">
-      <div className="absolute top-[2%] right-[-55%] w-[175%] opacity-45 [perspective:1200px] sm:right-[-24%] sm:w-[128%] sm:opacity-70 lg:top-[-6%] lg:right-[-16%] lg:w-[100%] lg:opacity-100">
+    <div aria-hidden="true" className={`pointer-events-none absolute inset-0 -z-0 ${placement === "intro" ? "overflow-hidden" : ""}`}>
+      <div className={frameClass}>
         <div
           ref={layerRef}
-          className="relative aspect-video [mask-image:linear-gradient(to_left,transparent,#000_7%,#000_38%,transparent_86%),linear-gradient(to_bottom,transparent,#000_9%,#000_72%,transparent)] [mask-composite:intersect] will-change-transform"
+          className={`relative aspect-video will-change-transform ${maskClass}`}
         >
           {/* Decoder source for the canvas: 1px and invisible (WebGL still reads full
               frames). Kept in the page because Chrome pauses detached muted video. */}

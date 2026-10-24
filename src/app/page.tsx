@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { Interactions } from "@/components/motion/Interactions";
+import { Intro } from "@/components/motion/Intro";
 import { profile, services, siteUrl } from "@/data/site";
 import { PlayButtonsBackground } from "@/components/motion/PlayButtonsBackground";
 import { SiteNav } from "@/components/nav/SiteNav";
@@ -79,6 +80,7 @@ export default function Home() {
       </div>
       {/* Last, so it runs after the page above has hydrated. */}
       <Interactions />
+      <Intro />
     </>
   );
 }

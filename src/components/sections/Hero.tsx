@@ -12,7 +12,10 @@ export function Hero() {
 
   return (
     <div className="relative z-10 pt-8 pb-8 sm:pt-12 lg:pt-16 lg:pb-10">
-      <div className="hero-halo flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-muted motion-safe:animate-rise">
+      <div
+        className="hero-halo flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-muted motion-safe:animate-rise"
+        style={{ animationDelay: "var(--intro-delay, 0ms)" }}
+      >
         <span className="rounded-full bg-night px-3 py-1 text-white ring-1 ring-white/10 [text-shadow:none]">{profile.title}</span>
         <span>{profile.specialties.join(" · ")}</span>
         <span className="hidden items-center gap-1 sm:inline-flex">
@@ -32,8 +35,8 @@ export function Hero() {
                 className={`inline-block motion-safe:animate-word-up ${HIGHLIGHT.has(word) ? "hero-underline" : ""}`}
                 style={{
                   animationDelay: HIGHLIGHT.has(word)
-                    ? `${120 + i * 70}ms, ${900 + i * 70}ms`
-                    : `${120 + i * 70}ms`,
+                    ? `calc(var(--intro-delay, 0ms) + ${120 + i * 70}ms), calc(var(--intro-delay, 0ms) + ${900 + i * 70}ms)`
+                    : `calc(var(--intro-delay, 0ms) + ${120 + i * 70}ms)`,
                 }}
               >
                 {word}
@@ -47,14 +50,14 @@ export function Hero() {
 
       <p
         className="hero-halo mt-6 max-w-[39.5em] text-lg leading-relaxed text-pretty text-muted motion-safe:animate-rise sm:text-xl sm:leading-relaxed"
-        style={{ animationDelay: "520ms" }}
+        style={{ animationDelay: "calc(var(--intro-delay, 0ms) + 520ms)" }}
       >
         {hero.intro}
       </p>
 
       <div
         className="mt-8 flex flex-col gap-3 motion-safe:animate-rise sm:flex-row sm:flex-wrap"
-        style={{ animationDelay: "650ms" }}
+        style={{ animationDelay: "calc(var(--intro-delay, 0ms) + 650ms)" }}
       >
         <a href="#projects" data-magnetic className={`group ${buttonStyles.base} ${buttonStyles.primary}`}>
           View My Work

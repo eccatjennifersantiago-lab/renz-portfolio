@@ -58,8 +58,9 @@ export const viewport: Viewport = {
 };
 
 // Runs before first paint: applies the saved theme (or the system preference)
-// so night mode never flashes light on load.
-const themeScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}})();`;
+// so night mode never flashes light on load, and decides whether the welcome
+// screen plays (once per visit, never for reduced motion).
+const themeScript = `(function(){var r=document.documentElement;try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}r.dataset.theme=t}catch(e){r.dataset.theme="light"}try{if(matchMedia("(prefers-reduced-motion: reduce)").matches||sessionStorage.getItem("introSeen")){r.dataset.intro="seen"}else{sessionStorage.setItem("introSeen","1");r.dataset.intro="show"}}catch(e){r.dataset.intro="show"}})();`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
